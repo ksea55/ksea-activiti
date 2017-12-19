@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ksea-activiti-base:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="ksea-activiti-base.war">
+      <element id="artifact" artifact-name="ksea-activiti-base:war exploded" />
+    </root>
+  </artifact>
+</component>
