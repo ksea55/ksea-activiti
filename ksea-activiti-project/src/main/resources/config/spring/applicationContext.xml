@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:annotation-config/>
+    <!--properties 文件引入-->
+    <context:property-placeholder location="classpath*:config/db/db.properties"/>
+
+    <!-- 在applicationContext.xml中只加载除表现层之外的所有bean，因此下面一行中不需要加载@Controller -->
+    <!-- 扫描注解Bean 不包括@Controller(表现层) 保证@Service @Repository的属性被注入-->
+    <context:component-scan base-package="org.ksea.activiti">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--2.数据库连接池-->
+    <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!--配置连接池属性-->
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <!-- 基本属性 url、user、password -->
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+
+        <property name="filters" value="${jdbc.filters}"/>
+        <!-- 关闭abanded连接时输出错误日志 -->
+        <property name="logAbandoned" value="false"/>
+        <property name="proxyFilters">
+            <list>
+                <ref bean="log-filter"/>
+            </list>
+        </property>
+    </bean>
+    <!--约定大于配置-->
+    <!--3.配置SqlSessionFactory对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--往下才是mybatis和spring真正整合的配置-->
+        <!--注入数据库连接池-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置mybatis全局配置文件:mybatisConfig.xml-->
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
+        <!--model,使用别名,多个用;隔开-->
+        <property name="typeAliasesPackage" value="org.ksea.activiti.model"/>
+        <!--扫描sql配置文件:mapper需要的xml文件-->
+        <property name="mapperLocations" value="classpath:mybatis/mapper/*Mapper.xml"/>
+    </bean>
+
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 4:配置扫描Dao接口包,动态实现DAO接口,注入到spring容器-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="annotationClass" value="javax.annotation.Resource"/>
+        <!--注入SqlSessionFactory-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!-- 给出需要扫描的Dao接口-->
+        <property name="basePackage" value="org.ksea.activiti.dao.*"/>
+    </bean>
+
+    <!-- 5:日志管理-->
+    <bean id="log-filter" class="com.alibaba.druid.filter.logging.Log4jFilter">
+        <property name="resultSetLogEnabled" value="true"/>
+    </bean>
+
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+
+    <!-- Activiti的bean -->
+    <!-- 流程引擎的配置bean -->
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="databaseSchemaUpdate" value="true"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <!-- 生成流程图的字体 -->
+        <!-- <property name="activityFontName" value="${diagram.activityFontName}"/>
+         <property name="labelFontName" value="${diagram.labelFontName}"/>-->
+        <!-- <property name="deploymentResources" value="classpath*:/deploy/*" /> -->
+    </bean>
+    <!-- 流程引擎的bean -->
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
+    </bean>
+    <!-- 服务组件的bean -->
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService"/>
+
+</beans>
+
