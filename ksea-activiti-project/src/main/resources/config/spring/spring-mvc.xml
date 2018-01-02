@@ -23,18 +23,26 @@
     <!-- 使用了 context:component-scan 标签 上面的 context:annotation-config 就不需要配置了 -->
     <!-- 因为此处只应该加载表现层组件，如果此处还加载dao层或service层的bean会将之前容器加载的替换掉 -->
     <!-- 而且此处不会进行AOP织入，所以会造成AOP失效问题（如事务不起作用） -->
-    <context:component-scan base-package="org.ksea.activiti.controller">
+    <!--<context:component-scan base-package="org.ksea.activiti.controller">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan>
+    </context:component-scan>-->
+
+    <!-- 自动扫描的包名 -->
+    <context:component-scan base-package="org.ksea.activiti.controller.*"/>
 
 
     <!-- 视图处理器 -->
-    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
         <property name="contentType" value="text/html;charset=utf-8"/>
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
     </bean>
+
+    <!-- 默认的注解映射的支持 -->
+    <mvc:annotation-driven/>
 
     <!-- 对静态资源文件的访问 -->
     <!-- 所有的页面引用到css/**的资源都从css/*里面进行查找 -->

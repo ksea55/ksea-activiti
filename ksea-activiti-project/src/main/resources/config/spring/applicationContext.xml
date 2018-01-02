@@ -2,22 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 
-    <context:annotation-config/>
     <!--properties 文件引入-->
-    <context:property-placeholder location="classpath*:config/db/db.properties"/>
+    <context:property-placeholder location="classpath*:config/db/db.properties" ignore-resource-not-found="true"/>
 
     <!-- 在applicationContext.xml中只加载除表现层之外的所有bean，因此下面一行中不需要加载@Controller -->
     <!-- 扫描注解Bean 不包括@Controller(表现层) 保证@Service @Repository的属性被注入-->
-    <context:component-scan base-package="org.ksea.activiti">
-        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan>
+    <context:component-scan base-package="org.ksea.activiti.service.*"/>
 
     <!--2.数据库连接池-->
     <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
@@ -52,13 +52,14 @@
         <!--往下才是mybatis和spring真正整合的配置-->
         <!--注入数据库连接池-->
         <property name="dataSource" ref="dataSource"/>
-        <!--配置mybatis全局配置文件:mybatisConfig.xml-->
-        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
         <!--model,使用别名,多个用;隔开-->
         <property name="typeAliasesPackage" value="org.ksea.activiti.model"/>
+        <!--配置mybatis全局配置文件:mybatisConfig.xml-->
+        <property name="configLocation" value="classpath:mybatis/mybatis-config.xml"/>
         <!--扫描sql配置文件:mapper需要的xml文件-->
-        <property name="mapperLocations" value="classpath:mybatis/mapper/*Mapper.xml"/>
+        <property name="mapperLocations" value="classpath:mybatis/mapper/**/*.xml"/>
     </bean>
+
 
     <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="sqlSessionFactory"/>
@@ -66,12 +67,16 @@
 
     <!-- 4:配置扫描Dao接口包,动态实现DAO接口,注入到spring容器-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="annotationClass" value="javax.annotation.Resource"/>
         <!--注入SqlSessionFactory-->
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
         <!-- 给出需要扫描的Dao接口-->
-        <property name="basePackage" value="org.ksea.activiti.dao.*"/>
+        <property name="basePackage" value="org.ksea.activiti.dao"/>
     </bean>
+
+
+
+    <!-- <context:annotation-config /> -->
+
 
     <!-- 5:日志管理-->
     <bean id="log-filter" class="com.alibaba.druid.filter.logging.Log4jFilter">
@@ -83,6 +88,7 @@
         <property name="dataSource" ref="dataSource"></property>
     </bean>
 
+    <tx:annotation-driven mode="proxy" transaction-manager="transactionManager"/>
 
     <!-- Activiti的bean -->
     <!-- 流程引擎的配置bean -->
