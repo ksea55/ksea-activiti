@@ -11,6 +11,24 @@
     <title>home</title>
 </head>
 <body>
-sdfsdfsdf
+
+没有事务
+<form action="${pageContext.request.contextPath}/student/save" method="post">
+
+    <input type="text" name="sid" value="12">
+    <input type="text" name="name" value="jacky">
+    <input type="submit"/>
+
+</form>
+
+有事务
+<form action="${pageContext.request.contextPath}/student/add" method="post">
+
+    <input type="text" name="sid" value="12">
+    <input type="text" name="name" value="jacky">
+    <input type="submit"/>
+
+</form>
+
 </body>
 </html>

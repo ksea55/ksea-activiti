@@ -1,2 +1,0 @@
-基于spring,springmvc,mybatis,activiti做的一个请假流程系统，
-主要是学习activiti，同时加强对activiti整合spring的一些学习

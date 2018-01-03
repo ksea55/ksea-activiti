@@ -28,12 +28,16 @@
     </context:component-scan>-->
 
     <!-- 自动扫描的包名 -->
-    <context:component-scan base-package="org.ksea.activiti.controller.*"/>
+    <context:component-scan base-package="org.ksea.activiti.controller"/>
 
+    <!-- 默认的注解映射的支持 -->
+    <mvc:annotation-driven/>
+    <context:annotation-config />
+
+    <!-- 静态资源(js、image等)的访问 -->
+    <mvc:default-servlet-handler/>
 
     <!-- 视图处理器 -->
-
-
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
@@ -41,8 +45,7 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
     </bean>
 
-    <!-- 默认的注解映射的支持 -->
-    <mvc:annotation-driven/>
+
 
     <!-- 对静态资源文件的访问 -->
     <!-- 所有的页面引用到css/**的资源都从css/*里面进行查找 -->
@@ -54,7 +57,7 @@
     <mvc:resources mapping="/fonts/**" location="/fonts/" cache-period="31556926"/>
 
     <!-- 全局异常配置 -->
-    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+  <!--  <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
                 <prop key="java.lang.Exception">error/500</prop>
@@ -63,13 +66,13 @@
                 <prop key="UnauthorizedException">error/noRealm</prop>
             </props>
         </property>
-        <!-- 设置日志输出级别，不定义则默认不输出警告等错误日志信息 -->
+        &lt;!&ndash; 设置日志输出级别，不定义则默认不输出警告等错误日志信息 &ndash;&gt;
         <property name="warnLogCategory" value="WARN"></property>
-        <!-- 默认错误页面，当找不到上面mappings中指定的异常对应视图时，使用本默认配置 -->
+        &lt;!&ndash; 默认错误页面，当找不到上面mappings中指定的异常对应视图时，使用本默认配置 &ndash;&gt;
         <property name="defaultErrorView" value="error/500"></property>
-        <!-- 默认HTTP状态码 -->
+        &lt;!&ndash; 默认HTTP状态码 &ndash;&gt;
         <property name="defaultStatusCode" value="500"></property>
-    </bean>
+    </bean>-->
 
 
     <!--     <mvc:interceptors>
