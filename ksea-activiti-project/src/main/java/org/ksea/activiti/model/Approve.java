@@ -3,18 +3,18 @@ package org.ksea.activiti.model;
 import java.io.Serializable;
 
 public class Approve implements Serializable {
-    private Long aid;
+    private Integer aid;
     private String name;//审批人的名字
     private String state;//审批是否通过
     private String comment;//标注
 
-    private String leaveBillId;
+    private Integer leaveBillId; //审批请假条
 
-    public Long getAid() {
+    public Integer getAid() {
         return aid;
     }
 
-    public void setAid(Long aid) {
+    public void setAid(Integer aid) {
         this.aid = aid;
     }
 
@@ -42,11 +42,11 @@ public class Approve implements Serializable {
         this.comment = comment;
     }
 
-    public String getLeaveBillId() {
+    public Integer getLeaveBillId() {
         return leaveBillId;
     }
 
-    public void setLeaveBillId(String leaveBillId) {
+    public void setLeaveBillId(Integer leaveBillId) {
         this.leaveBillId = leaveBillId;
     }
 

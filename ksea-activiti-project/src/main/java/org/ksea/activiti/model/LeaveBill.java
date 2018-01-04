@@ -7,20 +7,20 @@ import java.util.Set;
  * 请假单
  */
 public class LeaveBill {
-    private Long id;//主键ID
+    private Integer id;//主键ID
     private Integer days;// 请假天数
     private String content;// 请假内容
     private Date leaveDate = new Date();// 请假时间
     private String remark;// 备注
-    private String employeeId;// 请假人
+    private Integer employeeId;// 请假人
 
     private Integer state = 0;// 请假单状态 0初始录入,1.开始审批,2为审批完成
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -56,11 +56,11 @@ public class LeaveBill {
         this.remark = remark;
     }
 
-    public String getEmployeeId() {
+    public Integer getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(String employeeId) {
+    public void setEmployeeId(Integer employeeId) {
         this.employeeId = employeeId;
     }
 
