@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -93,5 +95,37 @@ public class ActivitiUtils {
 
 
     }
+
+
+    /**
+     * 在启动流程实例的时候，我需要绑定其主业务的id与acitviti进行业务绑定businessKey
+     * 并设定其任务申请人，也就是任务提交人
+     *
+     * @param processDefinitionId 流程定义Id
+     * @param businessKey         绑定业务id
+     * @param userId              提交人id
+     */
+    public void startProcessInstanceByProcessDefinitionId(String processDefinitionId, String businessKey, String userId) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("userId", userId);
+        processEngine.getRuntimeService().startProcessInstanceById(processDefinitionId, businessKey, variables);
+    }
+
+
+    /**
+     * 根据key启动流程实例，以最新流程版本启动
+     *
+     * @param processDefinitionKey
+     * @param businessKey
+     * @param userId
+     */
+    public void startProcessInstanceByProncessDefinitionKey(String processDefinitionKey, String businessKey, String userId) {
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("userId", userId);
+        processEngine.getRuntimeService().startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
+
+    }
+
 
 }
