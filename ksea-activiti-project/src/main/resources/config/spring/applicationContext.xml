@@ -15,10 +15,14 @@
     <!--properties 文件引入-->
     <context:property-placeholder location="classpath*:config/db/db.properties" ignore-resource-not-found="true"/>
 
-    <context:annotation-config />
+
     <!-- 在applicationContext.xml中只加载除表现层之外的所有bean，因此下面一行中不需要加载@Controller -->
     <!-- 扫描注解Bean 不包括@Controller(表现层) 保证@Service @Repository的属性被注入-->
-    <context:component-scan base-package="org.ksea.activiti.service"/>
+    <context:component-scan base-package="org.ksea.activiti.service">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <context:annotation-config/>
 
     <!--2.数据库连接池-->
     <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">

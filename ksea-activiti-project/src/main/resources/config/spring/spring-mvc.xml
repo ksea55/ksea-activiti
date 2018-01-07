@@ -27,15 +27,22 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>-->
 
-    <!-- 自动扫描的包名 -->
-    <context:component-scan base-package="org.ksea.activiti.controller"/>
-
     <!-- 默认的注解映射的支持 -->
+    <context:annotation-config/>
     <mvc:annotation-driven/>
-    <context:annotation-config />
+
+    <!-- 自动扫描的包名 -->
+    <context:component-scan base-package="org.ksea.activiti.controller" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+
+
+
 
     <!-- 静态资源(js、image等)的访问 -->
     <mvc:default-servlet-handler/>
+
 
     <!-- 视图处理器 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -52,9 +59,6 @@
     <mvc:resources mapping="/js/**" location="/js/" cache-period="31556926"/>
     <mvc:resources mapping="/css/**" location="/css/" cache-period="31556926"/>
     <mvc:resources mapping="/images/**" location="/images/" cache-period="31556926"/>
-    <mvc:resources mapping="/extend/**" location="/extend/" cache-period="31556926"/>
-    <mvc:resources mapping="/modeler/**" location="/modeler/" cache-period="31556926"/>
-    <mvc:resources mapping="/fonts/**" location="/fonts/" cache-period="31556926"/>
 
     <!-- 全局异常配置 -->
   <!--  <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
