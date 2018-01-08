@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -16,5 +17,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> listEmployee() {
         return employeeDao.listEmployee();
+    }
+
+    @Override
+    public Employee getEmployeeById(String id) {
+        return employeeDao.getEmployeeById(id);
     }
 }

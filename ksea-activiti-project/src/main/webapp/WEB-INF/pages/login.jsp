@@ -16,7 +16,7 @@
     </script>
 </head>
 <body style="text-align:center;">
-<form action="loginAction_login.action" method="post">
+<form action="${pageContext.request.contextPath}/login/doLogin" method="post">
     <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
             <td bgcolor="#1075b1">&nbsp;</td>
@@ -43,7 +43,7 @@
                                                 </td>
                                                 <td width="10" valign="bottom">&nbsp;</td>
                                                 <td height="24" colspan="2" valign="bottom">
-                                                    <select name="id">
+                                                    <select name="userId">
                                                         <c:forEach items="${employees}" var="employee">
                                                             <option value="${employee.id}">${employee.name}</option>
                                                         </c:forEach>

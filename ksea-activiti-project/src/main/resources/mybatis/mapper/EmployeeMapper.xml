@@ -5,4 +5,9 @@
     <select id="listEmployee" resultType="org.ksea.activiti.model.Employee">
        SELECT    id,name,password,email,role,managerId FROM  employee
     </select>
+
+    <select id="getEmployeeById" parameterType="java.lang.String" resultType="org.ksea.activiti.model.Employee">
+        SELECT id,name,password,email,role,managerId FROM  employee
+        WHERE id=#{id}
+    </select>
 </mapper>
