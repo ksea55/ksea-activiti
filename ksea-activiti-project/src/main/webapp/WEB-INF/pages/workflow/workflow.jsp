@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="/js/commons.jspf" %>
-<%@taglib uri="/struts-tags" prefix="s"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -42,7 +41,7 @@
 				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center"><s:property value="#pd.name"/></div></td>
 				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center"><s:date name="#pd.deploymentTime" format="yyyy-MM-dd HH:mm:ss"/></div></td>
 				        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21">
-				        	<a href="workFlowAction_delDeployment.action?deploymentId=<s:property value="#pd.id"/>">删除</a>
+				        	<a href="workFlowAction_delDeployment.action?deploymentId=<s:property value="#pd.id"/>删除</a>
 				        </div></td>
 				    </tr> 
 		      	</s:iterator>
@@ -96,7 +95,7 @@
 					        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><s:property value="diagramResourceName"/></div></td>
 					        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><s:property value="deploymentId"/></div></td>
 					        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21">
-					        	<a target="_blank" href="workFlowAction_viewImage.action?pdid=<s:property value="id"/>">查看流程图</a> 
+					        	<a target="_blank" href="workFlowAction_viewImage.action?pdid=<s:property value="id"/>查看流程图</a>
 						 	</div></td>
 					    </tr> 
 		      		</s:iterator>

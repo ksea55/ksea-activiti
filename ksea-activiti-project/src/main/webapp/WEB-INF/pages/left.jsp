@@ -110,7 +110,7 @@ a {text-decoration:none;color:black}
             </tr>
           </table></td>
         </tr>
-        
+
       </table>
     </div></td>
   </tr>
@@ -133,7 +133,7 @@ a {text-decoration:none;color:black}
               <td width="99"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td height="23" class="STYLE4" style="cursor:hand" onMouseOver="this.style.backgroundImage='url(${pageContext.request.contextPath}/images/tab_bg.gif)';this.style.borderStyle='solid';this.style.borderWidth='1';borderColor='#adb9c2'; "onmouseout="this.style.backgroundImage='url()';this.style.borderStyle='none'">
-                    	<a href="workFlowAction_deployUI.action" target="main">部署管理</a>
+                    	<a href="${pageContext.request.contextPath}/deployment/manager" target="main">部署管理</a>
                     </td>
                   </tr>
               </table></td>
@@ -147,7 +147,7 @@ a {text-decoration:none;color:black}
               <td width="99"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td height="23" class="STYLE4" style="cursor:hand" onMouseOver="this.style.backgroundImage='url(${pageContext.request.contextPath}/images/tab_bg.gif)';this.style.borderStyle='solid';this.style.borderWidth='1';borderColor='#adb9c2'; "onmouseout="this.style.backgroundImage='url()';this.style.borderStyle='none'">
-						<a href="workFlowAction_taskList.action" target="main">任务管理</a>
+						<a href="${pageContext.request.contextPath}/task/manager" target="main">任务管理</a>
 					</td>
                   </tr>
               </table></td>
@@ -157,8 +157,8 @@ a {text-decoration:none;color:black}
       </table></div>
     </td>
   </tr>
-  
-  
+
+
   <tr>
     <td height="19" background="${pageContext.request.contextPath}/images/main_69.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
