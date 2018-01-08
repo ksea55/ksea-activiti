@@ -108,7 +108,7 @@
 	<hr>
 	<br/>
 	<!-- 发布流程 -->
-	<form action="workFlowAction_newdeploy.action" enctype="multipart/form-data" method="POST">
+	<form action="" enctype="multipart/form-data" method="POST">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 		  <tr>
 		    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -131,7 +131,7 @@
 		  <tr>
 		    <td>
 		    	<div align="left" class="STYLE21">
-					流程名称：<input type="text" name="filename" style="width: 200px;"/><br/>
+					流程名称：<input type="text" name="processName" style="width: 200px;"/><br/>
 					流程文件:<input type="file" name="file" style="width: 200px;"/><br/>
 					<input type="submit" value="上传流程" class="button_ok"/>
 				</div>
