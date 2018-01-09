@@ -98,7 +98,7 @@
 					        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center">${pd.diagramResourceName}</div></td>
 					        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center">${pd.deploymentId}</div></td>
 					        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21">
-					        	<a target="_blank" href="workFlowAction_viewImage.action?pdid=${pd.id}">查看流程图</a>
+					        	<a target="_blank" href="${pageContext.request.contextPath}/deployment/show/image/${pd.id}">查看流程图</a>
 						 	</div></td>
 					    </tr> 
 		      		</c:forEach>

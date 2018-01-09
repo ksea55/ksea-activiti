@@ -5,16 +5,17 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.ksea.activiti.utils.ActivitiUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 @Controller
@@ -64,6 +65,37 @@ public class WorkFlowController {
     public String removeDeploymentById(@PathVariable("id") String id) {
         this.activitiUtils.removeDeploymentById(id);
         return "redirect:/deployment/manager";
+    }
+
+    @RequestMapping(value = "deployment/show/image/{pdid}", method = RequestMethod.GET)
+    @ResponseBody
+    public void showProcessImage(@PathVariable("pdid") String pdid, HttpServletResponse response) {
+        InputStream inputStream = this.activitiUtils.showProcessImages(pdid);
+        OutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+
+            byte[] bytes = new byte[10 * 1024];
+            int len = 0;
+            while ((len = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes);
+                outputStream.flush();
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != inputStream)
+                    inputStream.close();
+                if (null != outputStream)
+                    outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 
