@@ -7,7 +7,9 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.task.Task;
 import org.junit.Test;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.zip.ZipInputStream;
 
 /**
  * 基本的activiti测试
@@ -48,11 +50,29 @@ public class BaseActiviti {
 
         processEngine.getRepositoryService()
                 .createDeployment()
-                .addClasspathResource("activiti/bmp/qingjia.bpmn")//加载流程文件
-                .addClasspathResource("activiti/bmp/qingjia.png")
+                .name("测试请假流程")
+                .addClasspathResource("activiti/bmp/qingjiaProcess.bpmn")//加载流程文件
                 .deploy();
 
     }
+
+    @Test
+    public void deployment3() {
+        //这种方式 需要将activiti.cfg.xml 配置文件放在根目录下
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("activiti/bmp/qingjiaProcess.zip");
+        ZipInputStream zipInputStream= new ZipInputStream(inputStream);
+
+
+        processEngine.getRepositoryService()
+                .createDeployment()
+                .name("测试zip请假流程")
+                .addZipInputStream(zipInputStream)
+                .deploy();
+
+    }
+
 
 
     @Test //开始流程实例
