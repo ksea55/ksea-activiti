@@ -5,6 +5,7 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.ksea.activiti.utils.ActivitiUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,12 +44,11 @@ public class WorkFlowController {
         try {
             //文件实际名称
             String filename = file.getOriginalFilename();
-            if (filename.endsWith(".bpmn") || filename.endsWith(".xml")){
+            if (filename.endsWith(".bpmn") || filename.endsWith(".xml")) {
                 this.activitiUtils.deploymentProcessByInputstream(processName, file.getInputStream());
-            }else{
-                this.activitiUtils.deploymentProcessByFile(processName,file.getInputStream());
+            } else {
+                this.activitiUtils.deploymentProcessByFile(processName, file.getInputStream());
             }
-
 
 
         } catch (IOException e) {
@@ -56,6 +56,13 @@ public class WorkFlowController {
             System.out.println("文件部署发生异常,message:" + e.getMessage());
         }
 
+        return "redirect:/deployment/manager";
+    }
+
+
+    @RequestMapping(value = "deployment/remove/{id}", method = RequestMethod.GET)
+    public String removeDeploymentById(@PathVariable("id") String id) {
+        this.activitiUtils.removeDeploymentById(id);
         return "redirect:/deployment/manager";
     }
 

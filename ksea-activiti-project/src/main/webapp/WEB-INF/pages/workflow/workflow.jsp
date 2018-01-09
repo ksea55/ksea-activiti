@@ -44,7 +44,7 @@
 									<fmt:formatDate value="${deployment.deploymentTime}" pattern="yyyy-MM-dd  HH:mm:ss" />
 						</div></td>
 				        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21">
-				        	<a href="workFlowAction_delDeployment.action?deploymentId=${deployment.id}"/>删除</a>
+				        	<a href="${pageContext.request.contextPath}/deployment/remove/${deployment.id}"/>删除</a>
 				        </div></td>
 				    </tr> 
 		      	</c:forEach>
