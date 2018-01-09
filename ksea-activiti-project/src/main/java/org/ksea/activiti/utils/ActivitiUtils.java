@@ -10,6 +10,7 @@ import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -22,33 +23,49 @@ import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 /**
- * 所有activiti中的工具类
+ * 所有activiti中的工具类,该类就有spring容器进行管理
  */
+@Component(value = "activitiUtils")
 public class ActivitiUtils {
 
-    @Resource //基于spring容器中的流程引擎
+    @Resource(name = "processEngine") //基于spring容器中的流程引擎
     private ProcessEngine processEngine;
-
 
     /**
      * 根据流程名称与流程文件bpmn部署流程
+     * <p>
+     * 注意事项：一般在使用压缩工具其默认压缩文件格式是rar，通常压缩完毕然后我们在改成xxx.zip
+     * 这样就会造成我们在部署的时候，部署成功了act_re_deployment有部署信息，而在act_ge_bytearray二进制文件表中没有数据
+     * 导致在act_re_procdef流程定义表中没有数据
+     * 正确的做法，选中要压缩的文件->单击鼠标邮件->选择添加到压缩文件(A)...-->填写压缩文件名,并在压缩文件格式中选择ZIP文件格式即可
      *
      * @param processName 流程名称
-     * @param bpmnFile    流程图bpmn
      */
-    public void deploymentProcess(String processName, File bpmnFile) throws FileNotFoundException {
+    public void deploymentProcessByFile(String processName, InputStream inputStream) throws FileNotFoundException {
         //得到部署
         DeploymentBuilder deployment = processEngine.getRepositoryService().createDeployment();
-        String fileName = bpmnFile.getName();
-        String suffix = fileName.substring(fileName.lastIndexOf("."));
-        InputStream inputStream = new FileInputStream(bpmnFile);
+        ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+        deployment.name(processName).addZipInputStream(zipInputStream).deploy();
+    }
 
-        if (suffix.equals("zip")) {
-            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-            deployment.addInputStream(processName, inputStream).deploy();
-        }
+    /**
+     * 根据流进行流程部署
+     *
+     * @param processName 流程名称
+     * @param inputStream 流程文件流
+     * @throws FileNotFoundException
+     */
+    public void deploymentProcessByInputstream(String processName, InputStream inputStream) throws FileNotFoundException {
 
-        deployment.addInputStream(processName, inputStream).deploy();
+        String resourceName = ChineseToEnglish.getPingYin(processName) + ".bpmn";
+
+        //得到部署
+        processEngine.getRepositoryService()
+                .createDeployment()
+                .name(processName)
+                .addInputStream(resourceName, inputStream)
+                .deploy();
+
 
     }
 

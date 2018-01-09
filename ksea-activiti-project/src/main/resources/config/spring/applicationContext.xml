@@ -18,7 +18,7 @@
 
     <!-- 在applicationContext.xml中只加载除表现层之外的所有bean，因此下面一行中不需要加载@Controller -->
     <!-- 扫描注解Bean 不包括@Controller(表现层) 保证@Service @Repository的属性被注入-->
-    <context:component-scan base-package="org.ksea.activiti.service">
+    <context:component-scan base-package="org.ksea.activiti">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
@@ -90,28 +90,9 @@
 
     <tx:annotation-driven mode="proxy" transaction-manager="transactionManager"/>
 
-    <!-- Activiti的bean -->
-    <!-- 流程引擎的配置bean -->
-    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="databaseSchemaUpdate" value="true"/>
-        <property name="transactionManager" ref="transactionManager"/>
-        <!-- 生成流程图的字体 -->
-        <!-- <property name="activityFontName" value="${diagram.activityFontName}"/>
-         <property name="labelFontName" value="${diagram.labelFontName}"/>-->
-        <!-- <property name="deploymentResources" value="classpath*:/deploy/*" /> -->
-    </bean>
-    <!-- 流程引擎的bean -->
-    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
-        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
-    </bean>
-    <!-- 服务组件的bean -->
-    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
-    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
-    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
-    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
-    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
-    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService"/>
+   <!--导入activiti-->
+
+    <import resource="activiti-context.xml"/>
 
 </beans>
 

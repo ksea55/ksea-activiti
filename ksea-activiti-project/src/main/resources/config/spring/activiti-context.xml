@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!-- Activiti的bean -->
+    <!-- 流程引擎的配置bean -->
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="databaseSchemaUpdate" value="true"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <!-- <property name="deploymentResources" value="classpath*:/deploy/*" /> -->
+        <property name="activityFontName" value="宋体"/><!-- 避免发布的图片和xml遇到中文时乱码 -->
+        <property name="labelFontName" value="宋体"/>
+        <property name="xmlEncoding" value="utf8"/><!-- 解析xml流程文件所使用的字符集，默认为utf8，依据数据库来 -->
+
+
+    </bean>
+    <!-- 流程引擎的bean -->
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
+    </bean>
+    <!-- 服务组件的bean -->
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService"/>
+
+</beans>
+
