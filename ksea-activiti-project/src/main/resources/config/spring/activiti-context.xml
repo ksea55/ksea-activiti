@@ -12,6 +12,7 @@
         <property name="databaseSchemaUpdate" value="true"/>
         <property name="transactionManager" ref="transactionManager"/>
         <!-- <property name="deploymentResources" value="classpath*:/deploy/*" /> -->
+        <property name="annotationFontName" value="宋体"/>
         <property name="activityFontName" value="宋体"/><!-- 避免发布的图片和xml遇到中文时乱码 -->
         <property name="labelFontName" value="宋体"/>
         <property name="xmlEncoding" value="utf8"/><!-- 解析xml流程文件所使用的字符集，默认为utf8，依据数据库来 -->

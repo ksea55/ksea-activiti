@@ -1,7 +1,9 @@
 package org.ksea.activiti.utils;
 
 
+import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -10,6 +12,9 @@ import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.activiti.image.ProcessDiagramGenerator;
+import org.activiti.image.impl.DefaultProcessDiagramCanvas;
+import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -17,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +122,48 @@ public class ActivitiUtils {
     public InputStream showProcessImages(String processDefinitionId) {
         return processEngine.getRepositoryService().getProcessDiagram(processDefinitionId);
 
+
+    }
+
+
+    /**
+     * 根据流程定义id生成流程图
+     *
+     * @param processDefinitionId
+     * @return
+     */
+    public InputStream generatorProcessImage(String processDefinitionId) {
+
+        //根据流程定义获取bpmn文件
+        BpmnModel bpmnModel = processEngine.getRepositoryService().getBpmnModel(processDefinitionId);
+        //获取流程引擎配置信息
+        ProcessEngineConfiguration processEngineConfiguration = processEngine.getProcessEngineConfiguration();
+        //获取流程图片生成器
+        ProcessDiagramGenerator processDiagramGenerator = processEngineConfiguration.getProcessDiagramGenerator();
+
+        List activeActivityIds = new ArrayList<>(0);
+        List highLightedFlows = new ArrayList<>(0);
+
+        //解决中文乱码
+        InputStream inputStream = processDiagramGenerator.generateDiagram(
+                bpmnModel, //流程实体
+                "png", //图片类型
+                activeActivityIds, //节点id
+                highLightedFlows, //高亮
+                processEngineConfiguration.getActivityFontName(), //节点名称从配置文件过来的"宋体"
+                processEngineConfiguration.getLabelFontName(), //标签
+                processEngineConfiguration.getAnnotationFontName(),
+                processEngineConfiguration.getClassLoader(),
+                1.0);
+
+        return inputStream;
+    }
+
+
+    public void de() {
+        //  DefaultProcessDiagramCanvas defaultProcessDiagramCanvas = new DefaultProcessDiagramCanvas();
+
+        //DefaultProcessDiagramGenerator processDiagramGenerator = new DefaultProcessDiagramGenerator();
 
     }
 

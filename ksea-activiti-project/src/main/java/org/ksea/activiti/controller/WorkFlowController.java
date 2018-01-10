@@ -70,7 +70,8 @@ public class WorkFlowController {
     @RequestMapping(value = "deployment/show/image/{pdid}", method = RequestMethod.GET)
     @ResponseBody
     public void showProcessImage(@PathVariable("pdid") String pdid, HttpServletResponse response) {
-        InputStream inputStream = this.activitiUtils.showProcessImages(pdid);
+        //  InputStream inputStream = this.activitiUtils.showProcessImages(pdid);
+        InputStream inputStream = this.activitiUtils.generatorProcessImage(pdid);
         OutputStream outputStream = null;
         try {
             outputStream = response.getOutputStream();
