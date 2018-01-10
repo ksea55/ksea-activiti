@@ -141,6 +141,7 @@ public class ActivitiUtils {
         //获取流程图片生成器
         ProcessDiagramGenerator processDiagramGenerator = processEngineConfiguration.getProcessDiagramGenerator();
 
+
         List activeActivityIds = new ArrayList<>(0);
         List highLightedFlows = new ArrayList<>(0);
 
