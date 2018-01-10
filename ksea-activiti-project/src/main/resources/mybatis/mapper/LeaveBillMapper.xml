@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.ksea.activiti.dao.LeaveBillDao">
+
+    <select id="listLeaveBillByEmployeeId" resultType="org.ksea.activiti.model.LeaveBill"
+            parameterType="java.lang.Integer">
+        SELECT  l.id,l.days,l.content,l.leaveDate,l.remark,l.state,l.employeeId from leavebill l WHERE l.employeeId=#{eid};
+    </select>
+
+</mapper>

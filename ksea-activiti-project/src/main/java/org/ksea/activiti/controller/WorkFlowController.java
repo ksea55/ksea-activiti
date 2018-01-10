@@ -2,6 +2,8 @@ package org.ksea.activiti.controller;
 
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.task.Task;
+import org.ksea.activiti.model.Employee;
 import org.ksea.activiti.utils.ActivitiUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,6 +104,11 @@ public class WorkFlowController {
 
     @RequestMapping(value = "task/manager", method = RequestMethod.GET)
     public String taskManager(HttpServletRequest request, Model model) {
+        Employee user = (Employee) request.getSession().getAttribute("user");
+        List<Task> tasks = this.activitiUtils.listTask(user.getId() + "");
+        model.addAttribute("tasks", tasks);
+
+
         return "workflow/task";
     }
 
