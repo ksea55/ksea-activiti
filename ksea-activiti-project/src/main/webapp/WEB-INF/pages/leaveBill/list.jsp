@@ -55,31 +55,36 @@
 				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center"><fmt:formatDate value="${lb.leaveDate}" pattern="yyyy-MM-dd HH:mm:ss"/></div></td>
 				        <td height="20" bgcolor="#FFFFFF" class="STYLE19">
 				        	<div align="center">
-				 					<s:if test="state==0">
-				 						保存
-				 					</s:if>
-				 					<s:elseif test="state==1">
-				 						开始审批
-				 					</s:elseif>
-				 					<s:else>
-				 						审批完成
-				 					</s:else>
+								<c:choose>
+									<c:when test="${lb.state==0}">
+										保存
+									</c:when>
+									<c:when test="${lb.state==1}">
+										审批中
+									</c:when>
+									<c:otherwise>
+										审批完成
+									</c:otherwise>
+								</c:choose>
 			            	</div>
 			            </td>
 				        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21">
-				        	<s:if test="state==0">
-		 						<a href="${pageContext.request.contextPath }/leavebillAction_input.action?id=${lb.id}" >修改</a>
-								<a href="leaveBillAction_delete.action?id=${lb.id}" >删除</a>
-								<a href="${pageContext.request.contextPath }/workFlowAction_startProcess.action?id=${lb.id}" >申请请假</a>
-		 					</s:if>
-		 					<s:elseif test="state==1">
-		 						<a href="${pageContext.request.contextPath }/workFlowAction_viewHisComment.action?id=${lb.id}" >查看审核记录</a>
-		 					</s:elseif>
-		 					<s:else>
-		 						<a href="${pageContext.request.contextPath }/leavebillAction_input.action?id=${lb.id}" >修改</a>
-								<a href="leaveBillAction_delete.action?id=${lb.id}" >删除</a>
-								<a href="${pageContext.request.contextPath }/workFlowAction_viewHisComment.action?id=${lb.id}" >查看审核记录</a>
-		 					</s:else>
+
+							<c:choose>
+								<c:when test="${lb.state==0}">
+									<a href="${pageContext.request.contextPath }/leavebillAction_input.action?id=${lb.id}" >修改</a>
+									<a href="leaveBillAction_delete.action?id=${lb.id}" >删除</a>
+									<a href="${pageContext.request.contextPath }/deployment/startProcess/page/${lb.id}" >发起请假</a>
+								</c:when>
+								<c:when test="${lb.state==1}">
+									<a href="${pageContext.request.contextPath }/workFlowAction_viewHisComment.action?id=${lb.id}" >查看审核记录</a>
+								</c:when>
+								<c:otherwise>
+									<a href="${pageContext.request.contextPath }/leavebillAction_input.action?id=${lb.id}" >修改</a>
+									<a href="leaveBillAction_delete.action?id=${lb.id}" >删除</a>
+									<a href="${pageContext.request.contextPath }/workFlowAction_viewHisComment.action?id=${lb.id}" >查看审核记录</a>
+								</c:otherwise>
+							</c:choose>
 
 						</div></td>
 				    </tr>

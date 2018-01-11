@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.ksea.activiti.dao.ApproveDao">
+
+    <insert id="save" parameterType="org.ksea.activiti.model.Approve">
+         INSERT  INTO  approve(name, state, comment, leaveBillId)
+         VALUES (#{name},#{state},#{comment},#{leaveBillId})
+    </insert>
+
+
+    <select id="listApproveByLeaveBillId" resultType="org.ksea.activiti.model.Approve" parameterType="java.lang.Integer">
+
+        SELECT  a.aid,a.name,a.state,a.comment,a.leaveBillId FROM  approve a WHERE a.leaveBillId=#{lbid}
+
+    </select>
+
+
+</mapper>

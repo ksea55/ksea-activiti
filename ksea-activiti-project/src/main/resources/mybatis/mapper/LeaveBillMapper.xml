@@ -2,9 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.ksea.activiti.dao.LeaveBillDao">
 
-    <select id="listLeaveBillByEmployeeId" resultType="org.ksea.activiti.model.LeaveBill"
+    <select id="listLeaveBillByEmployeeId" resultType="org.ksea.activiti.vo.LeaveBillVo"
             parameterType="java.lang.Integer">
-        SELECT  l.id,l.days,l.content,l.leaveDate,l.remark,l.state,l.employeeId from leavebill l WHERE l.employeeId=#{eid};
+        SELECT  l.id,l.days,l.content,l.leaveDate,l.remark,l.state,l.employeeId ,e.name applicator
+        from leavebill l
+        INNER  JOIN  employee e  ON  l.employeeId=e.id
+        WHERE l.employeeId=#{eid};
     </select>
+
+    <insert id="save" parameterType="org.ksea.activiti.model.LeaveBill">
+         INSERT  INTO  leavebill(days,content,leaveDate,remark,state,employeeId)
+         VALUES (#{days},#{content},#{leaveDate},#{remark},#{state},#{employeeId})
+    </insert>
+
+
+    <select id="getLeaveBillById" resultType="org.ksea.activiti.vo.LeaveBillVo"
+            parameterType="java.lang.Integer">
+        SELECT  l.id,l.days,l.content,l.leaveDate,l.remark,l.state,l.employeeId from leavebill l WHERE l.id=#{id}
+    </select>
+
+    <update id="modifyLeaveBillById" parameterType="org.ksea.activiti.model.LeaveBill">
+    UPDATE  leavebill l SET l.days=#{days},l.content=#{content},l.leaveDate=#{leaveDate},l.remark=#{remark},l.state=#{state},l.employeeId=#{employeeId}
+     WHERE  l.id=#{id}
+    </update>
+
 
 </mapper>

@@ -10,6 +10,7 @@ import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
@@ -276,11 +277,16 @@ public class ActivitiUtils {
 
         String processDefinitionId = getTaskById(taskId).getProcessDefinitionId();
 
+        /**
+         *
+         * this.processEngine.getRepositoryService().createProcessDefinitionQuery().processDefinitionId(processDefinitionId)
+         *.singleResult();
+         * 注意在使用这种方式获取到ProcessDefinitionEntity，其ProcessDefinitionEntity中的activtyImpl是空的
+         *
+         *
+          */
         //根据流程定义Id-->pdid获取到流程定义实体 ProcessDefinitionEntity
-        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) processEngine.getRepositoryService()
-                .createProcessDefinitionQuery()
-                .processDefinitionId(processDefinitionId)
-                .singleResult();
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) this.processEngine.getRepositoryService().getProcessDefinition(processDefinitionId);
         return processDefinitionEntity;
 
     }
@@ -324,6 +330,37 @@ public class ActivitiUtils {
 
 
     /**
+     *
+     * @param businessKey
+     * @param assignee
+     * @return
+     */
+    public Task  getTaskByBusinessKeyAndAssignee(String businessKey,String assignee){
+
+        List<Execution> executions = processEngine.getRuntimeService()
+                .createExecutionQuery().
+                        processInstanceBusinessKey(businessKey)
+                .list();
+
+
+        Task task = null;
+
+        for (Execution execution : executions) {
+            task = processEngine.getTaskService()
+                                .createTaskQuery()
+                                .executionId(execution.getId())
+                                .taskAssignee(assignee)
+                                .singleResult();
+            if (null !=task) break;
+
+        }
+
+       return task;
+
+    }
+
+
+    /**
      * 根据taskId获取到外面与业务绑定的businesskey，从而根据该key关联其他
      *
      * @param taskId
@@ -342,6 +379,19 @@ public class ActivitiUtils {
         processEngine.getTaskService().complete(taskId);
 
         return getProcessInstanceByTaskId(taskId); //如果PI是null表明整个流程已经执行完毕，如果不为null表明流程正在执行中
+
+
+    }
+
+    public ProcessInstance finishTask(String taskId,Map<String,Object> variables) {
+
+        ProcessInstance processInstance = getProcessInstanceByTaskId(taskId);
+        //完成任务
+        processEngine.getTaskService().complete(taskId,variables);
+
+       return this.processEngine.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstance.getId()).singleResult();
+
+         //如果PI是null表明整个流程已经执行完毕，如果不为null表明流程正在执行中
 
 
     }

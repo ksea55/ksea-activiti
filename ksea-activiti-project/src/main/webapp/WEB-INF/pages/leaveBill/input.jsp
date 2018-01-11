@@ -1,13 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/js/commons.jspf" %>
-<%@taglib prefix="s" uri="/struts-tags" %>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>请假管理</title>
 </head>
 <body>
- 	<form action="leavebillAction_add.action" method="post">
+ 	<form action="${pageContext.request.contextPath}/leave/add" method="post">
  		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 		  <tr>
 		    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -34,9 +33,9 @@
 		  <tr>
 		    <td>
 		    	<div align="left" class="STYLE21">
-			 		请假天数:<s:textfield name="days" cssStyle="width: 200px;"/><br/>
-			 		请假原因:<s:textfield name="content" cssStyle="width: 800px;"/><br/>
-			 		备&emsp;&emsp;注:<s:textarea name="remark" cols="50" rows="5"/></textarea><br/>
+			 		请假天数:<input type="text" value="${lb.days}" name="days" cssStyle="width: 200px;"/><br/>
+			 		请假原因:<input type="text" value="${lb.content}" name="content" cssStyle="width: 800px;"/><br/>
+			 		备&emsp;&emsp;注:<input type="text" value="${lb.remark}" name="remark" cols="50" rows="5"/></textarea><br/>
 			 		<input type="submit" value="提交" class="button_ok"/>
 				</div>
 		    </td>

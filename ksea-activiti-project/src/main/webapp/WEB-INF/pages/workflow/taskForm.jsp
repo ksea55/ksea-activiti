@@ -1,7 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="/js/commons.jspf" %>
-<%@taglib uri="/struts-tags" prefix="s"%>
+
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -29,19 +30,19 @@
 		  </tr>
 		  <tr>
 		  	<td>
-		  		<form action="workFlowAction_submitTask.action" method="post">
-		  			<s:hidden name="taskId"></s:hidden>
+		  		<form action="${pageContext.request.contextPath}/task/completed" method="post">
+		  			<input type="hidden" name="taskId" value="${taskId}"/>
 			  		<div align="left" class="STYLE21">
-				 		请假天数:<s:textfield name="days" disabled="true" cssStyle="width: 200px;"/><br/>
-				 		请假原因:<s:textfield name="content" disabled="true" cssStyle="width: 800px;"/><br/>
-				 		请假备注:<s:textarea name="remark" disabled="true" cols="30" rows="2"/><br/>
-				 		批&emsp;&emsp;注:<s:textarea name="comment" cols="50" rows="5"/><br/>
+				 		请假天数:<input type="text" name="days" value="${lb.days}" disabled="true" cssStyle="width: 200px;"/><br/>
+				 		请假原因:<input type="text" name="content" value="${lb.content}" disabled="true" cssStyle="width: 800px;"/><br/>
+				 		请假备注:<input type="text" name="remark" value="${lb.remark}" disabled="true" cols="30" rows="2"/><br/>
+				 		批&emsp;&emsp;注:<input type="textarea" name="comment" cols="50" rows="5"/><br/>
 				 		<!-- 使用连线的名称作为按钮 -->
-				 		<s:if test="#outcomeList!=null && #outcomeList.size()>0">
-				 			<s:iterator value="#outcomeList">
-				 				<input type="submit" name="outcome" value="<s:property value="properties.name"/>" class="button_ok"/>
-				 			</s:iterator>
-				 		</s:if>
+				 		<c:if test="${sequenceFlowName!=null && sequenceFlowName.size()>0}">
+				 			<c:forEach items="${sequenceFlowName}" var="name">
+				 				<input type="submit" name="outcome" value="${name}" class="button_ok"/>
+				 			</c:forEach>
+				 		</c:if>
 			 		</div>
 			 	</form>
 		  	</td>
@@ -49,7 +50,7 @@
 	</table>
 	<hr>
 	<br>
-	<s:if test="#commentList!=null && #commentList.size()>0">
+	<c:if test="${approves!=null && approves.size()>0}">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 			  <tr>
 			    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -75,19 +76,19 @@
 			        <td width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">批注人</span></div></td>
 			        <td width="75%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">批注信息</span></div></td>
 			      </tr>
-			      <s:iterator value="#commentList">
+			      <c:forEach items="${approves}" var="approve">
 			      	 <tr>
-				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center"><s:property value="name"/></div></td>
-				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center"><s:property value="comment"/></div></td>
+				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">${approve.name}</div></td>
+				        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">${approve.comment}</div></td>
 				    </tr> 
-			      </s:iterator>
+			      </c:forEach>
 			        
 			      
 			    </table></td>
 			  </tr>
 		</table>
-	</s:if>
-	<s:else>
+	</c:if>
+	<c:if test="${approves==null}">
 		<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
 			  <tr>
 			    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -106,7 +107,7 @@
 			    </table></td>
 			  </tr>
 		</table>
-	</s:else>
+	</c:if>
 	
 		<%--  --%>
 </body>
