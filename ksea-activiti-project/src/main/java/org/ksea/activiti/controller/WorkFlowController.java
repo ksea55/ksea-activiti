@@ -129,7 +129,7 @@ public class WorkFlowController {
 
 
     @RequestMapping(value = "task/view/{taskId}", method = RequestMethod.GET)
-    public String startProcessPage(@PathVariable("taskId") String taskId, HttpServletRequest request, Model model) {
+    public String taskList(@PathVariable("taskId") String taskId, HttpServletRequest request, Model model) {
 
         String businessKey = this.activitiUtils.businessKeyByTaskId(taskId);
 
@@ -151,10 +151,10 @@ public class WorkFlowController {
 
         List<Approve> approves = approveService.listApproveByLeaveBillId(Integer.parseInt(businessKey));
 
-        model.addAttribute("approves",approves);
+        model.addAttribute("approves", approves);
 
         model.addAttribute("sequenceFlowName", sequenceFlowName);
-        model.addAttribute("taskId",taskId);
+        model.addAttribute("taskId", taskId);
 
         return "workflow/taskForm";
     }
@@ -163,14 +163,10 @@ public class WorkFlowController {
      * 发起请假，启动流程实例，绑定业务
      *
      * @param businessKey
-     * @param model
      * @return
      */
     @RequestMapping(value = "deployment/startProcess/page/{businessKey}", method = RequestMethod.GET)
-    public String startProcessPage(@PathVariable("businessKey") Integer businessKey, HttpServletRequest request, Model model) {
-
-        LeaveBillVo leaveBillVo = this.leaveBillService.getLeaveBillById(businessKey);
-        model.addAttribute("lb", leaveBillVo);
+    public void startProcessPage(@PathVariable("businessKey") Integer businessKey, HttpServletRequest request) {
 
         Employee user = (Employee) request.getSession().getAttribute("user");
 
@@ -178,24 +174,6 @@ public class WorkFlowController {
         this.activitiUtils.startProcessInstanceByProncessDefinitionKey("qingjiaProcess", businessKey + "", user.getId() + "");
 
 
-        //查找当前登录人的task
-        Task task = this.activitiUtils.getTaskByBusinessKeyAndAssignee(businessKey + "", user.getId() + "");
-
-        //查找sequenceflow
-
-        List<PvmTransition> pvmTransitions = this.activitiUtils.listSequenceFlowByTaskId(task.getId());
-
-        List<String> sequenceFlowName = new ArrayList<>();
-
-        for (PvmTransition pvmTransition : pvmTransitions) {
-            sequenceFlowName.add(String.valueOf(pvmTransition.getProperty("name")));
-        }
-
-
-        model.addAttribute("sequenceFlowName", sequenceFlowName);
-
-
-        return "workflow/taskForm";
     }
 
     @RequestMapping(value = "task/completed", method = RequestMethod.POST)
@@ -221,5 +199,36 @@ public class WorkFlowController {
         return "redirect:/leave/manager";
     }
 
+    @RequestMapping(value = "process/active/image/{businesskey}", method = RequestMethod.GET)
+    @ResponseBody
+    public void showhighLightedActivitiesImage(@PathVariable("businesskey") String businesskey, HttpServletResponse response) {
+        OutputStream outputStream = null;
+        InputStream inputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            inputStream = this.activitiUtils.currentActivityByBusniessKey(businesskey);
+            byte[] bytes = new byte[10 * 1024];
+            int len = 0;
+            while ((len = inputStream.read(bytes)) != -1) {
+                 outputStream.write(bytes);
+            }
+            outputStream.flush();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (null!=inputStream)
+                    inputStream.close();
+                if (null!=outputStream)
+                    outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
 
 }

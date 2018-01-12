@@ -74,10 +74,10 @@
 								<c:when test="${lb.state==0}">
 									<a href="${pageContext.request.contextPath }/leavebillAction_input.action?id=${lb.id}" >修改</a>
 									<a href="leaveBillAction_delete.action?id=${lb.id}" >删除</a>
-									<a href="${pageContext.request.contextPath }/deployment/startProcess/page/${lb.id}" >发起请假</a>
+									<a href="${pageContext.request.contextPath }/deployment/startProcess/page/${lb.id}" >启动请假流程</a>
 								</c:when>
 								<c:when test="${lb.state==1}">
-									<a href="${pageContext.request.contextPath }/workFlowAction_viewHisComment.action?id=${lb.id}" >查看审核记录</a>
+									<a target="_blank" href="${pageContext.request.contextPath }/process/active/image/${lb.id}" >查看流程</a>
 								</c:when>
 								<c:otherwise>
 									<a href="${pageContext.request.contextPath }/leavebillAction_input.action?id=${lb.id}" >修改</a>

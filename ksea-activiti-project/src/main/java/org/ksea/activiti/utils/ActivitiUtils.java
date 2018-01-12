@@ -65,15 +65,12 @@ public class ActivitiUtils {
     public void deploymentProcessByInputstream(String processName, InputStream inputStream) throws FileNotFoundException {
 
         String resourceName = ChineseToEnglish.getPingYin(processName) + ".bpmn";
-
         //得到部署
         processEngine.getRepositoryService()
                 .createDeployment()
                 .name(processName)
                 .addInputStream(resourceName, inputStream)
                 .deploy();
-
-
     }
 
 
@@ -111,6 +108,28 @@ public class ActivitiUtils {
                 .orderByProcessDefinitionVersion() //根据流程定义版本号降序排序
                 .desc()
                 .list();
+    }
+
+    /**
+     * 根据id获取流程定义
+     *
+     * @param processDefinitionId
+     * @return
+     */
+    public ProcessDefinition getProcessDefinitionById(String processDefinitionId) {
+
+        return processEngine.getRepositoryService().getProcessDefinition(processDefinitionId);
+    }
+
+
+    /**
+     * 根据流程定义id获取bpmnModel
+     *
+     * @param processDefinitionId
+     * @return
+     */
+    public BpmnModel getBpmnModel(String processDefinitionId) {
+        return this.processEngine.getRepositoryService().getBpmnModel(processDefinitionId);
     }
 
 
@@ -159,14 +178,6 @@ public class ActivitiUtils {
                 1.0);
 
         return inputStream;
-    }
-
-
-    public void de() {
-        //  DefaultProcessDiagramCanvas defaultProcessDiagramCanvas = new DefaultProcessDiagramCanvas();
-
-        //DefaultProcessDiagramGenerator processDiagramGenerator = new DefaultProcessDiagramGenerator();
-
     }
 
 
@@ -261,10 +272,7 @@ public class ActivitiUtils {
         String processDefinitionId = getTaskById(taskId).getProcessDefinitionId();
 
         //根据pdid获取当前流程定义
-        return processEngine.getRepositoryService()
-                .createProcessDefinitionQuery()
-                .processDefinitionId(processDefinitionId)
-                .singleResult();
+        return processEngine.getRepositoryService().getProcessDefinition(processDefinitionId);
     }
 
     /**
@@ -275,7 +283,7 @@ public class ActivitiUtils {
      */
     private ProcessDefinitionEntity getProcessDefinitionEntityByTaskId(String taskId) {
 
-        String processDefinitionId = getTaskById(taskId).getProcessDefinitionId();
+        ProcessDefinition processDefinition = getProcessDefinitionByTaskId(taskId);
 
         /**
          *
@@ -284,9 +292,9 @@ public class ActivitiUtils {
          * 注意在使用这种方式获取到ProcessDefinitionEntity，其ProcessDefinitionEntity中的activtyImpl是空的
          *
          *
-          */
+         */
         //根据流程定义Id-->pdid获取到流程定义实体 ProcessDefinitionEntity
-        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) this.processEngine.getRepositoryService().getProcessDefinition(processDefinitionId);
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) processDefinition;
         return processDefinitionEntity;
 
     }
@@ -330,12 +338,11 @@ public class ActivitiUtils {
 
 
     /**
-     *
      * @param businessKey
      * @param assignee
      * @return
      */
-    public Task  getTaskByBusinessKeyAndAssignee(String businessKey,String assignee){
+    public Task getTaskByBusinessKeyAndAssignee(String businessKey, String assignee) {
 
         List<Execution> executions = processEngine.getRuntimeService()
                 .createExecutionQuery().
@@ -347,16 +354,62 @@ public class ActivitiUtils {
 
         for (Execution execution : executions) {
             task = processEngine.getTaskService()
-                                .createTaskQuery()
-                                .executionId(execution.getId())
-                                .taskAssignee(assignee)
-                                .singleResult();
-            if (null !=task) break;
+                    .createTaskQuery()
+                    .executionId(execution.getId())
+                    .taskAssignee(assignee)
+                    .singleResult();
+            if (null != task) break;
 
         }
 
-       return task;
+        return task;
 
+    }
+
+    /**
+     * 根据当前的businessKey获取当前活动节点的流程图并高亮显示
+     *
+     * @param businessKey
+     * @return
+     */
+    public InputStream currentActivityByBusniessKey(String businessKey) {
+
+        //当并行的情况下，其实高亮的活动流程节点是多个
+        ProcessInstance processInstance = this.processEngine.getRuntimeService()
+                .createProcessInstanceQuery()
+                .processInstanceBusinessKey(businessKey).singleResult();
+
+        String processDefinitionId = processInstance.getProcessDefinitionId();
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) getProcessDefinitionById(processDefinitionId);
+
+        //获取到当前的活动节点id
+        String activityId = processInstance.getActivityId();
+        ActivityImpl activity = processDefinitionEntity.findActivity(activityId);
+
+        BpmnModel bpmnModel = getBpmnModel(processDefinitionId);
+
+        List<String> highLightedActivities = new ArrayList<>();
+        List<String> highLightedFlows = new ArrayList<>();
+
+        highLightedActivities.add(activity.getId());
+
+
+        ProcessEngineConfiguration processEngineConfiguration = processEngine.getProcessEngineConfiguration();
+        ProcessDiagramGenerator processDiagramGenerator = processEngineConfiguration.getProcessDiagramGenerator();
+        InputStream inputStream = processDiagramGenerator.generateDiagram(
+                bpmnModel,
+                "png",
+                highLightedActivities,
+                highLightedFlows,
+                processEngineConfiguration.getActivityFontName(),
+                processEngineConfiguration.getLabelFontName(),
+                processEngineConfiguration.getAnnotationFontName(),
+                processEngineConfiguration.getClassLoader(),
+                1.0
+        );
+
+
+        return inputStream;
     }
 
 
@@ -373,27 +426,15 @@ public class ActivitiUtils {
     }
 
 
-    public ProcessInstance finishTask(String taskId) {
-
+    public void finishTask(String taskId) {
         //完成任务
         processEngine.getTaskService().complete(taskId);
 
-        return getProcessInstanceByTaskId(taskId); //如果PI是null表明整个流程已经执行完毕，如果不为null表明流程正在执行中
-
-
     }
 
-    public ProcessInstance finishTask(String taskId,Map<String,Object> variables) {
-
-        ProcessInstance processInstance = getProcessInstanceByTaskId(taskId);
+    public void finishTask(String taskId, Map<String, Object> variables) {
         //完成任务
-        processEngine.getTaskService().complete(taskId,variables);
-
-       return this.processEngine.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstance.getId()).singleResult();
-
-         //如果PI是null表明整个流程已经执行完毕，如果不为null表明流程正在执行中
-
-
+        processEngine.getTaskService().complete(taskId, variables);
     }
 
 }
