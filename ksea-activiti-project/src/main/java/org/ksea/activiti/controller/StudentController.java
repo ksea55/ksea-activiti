@@ -5,10 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import org.ksea.activiti.model.Student;
 import org.ksea.activiti.service.StudentService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -23,7 +21,13 @@ public class StudentController {
 
     @RequestMapping(value = "save", method = RequestMethod.POST)
     public void save(@ModelAttribute Student student) {
-        studentService.saveStudent(student);
+        studentService.save(student);
+    }
+
+    @RequestMapping(value = "add/{parent}", method = RequestMethod.GET)
+    public String add(@PathVariable("parent") String parent, Model model) {
+        model.addAttribute("parent", parent);
+        return "ztree/add";
     }
 
 
@@ -41,12 +45,14 @@ public class StudentController {
     @RequestMapping(value = "json", method = RequestMethod.POST)
     @ResponseBody
     public Object listJson() {
-
         List<Student> list = this.studentService.list();
-
         return list;
+    }
 
-
+    @RequestMapping(value = "info/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public Object getObj(@PathVariable("id") String id) {
+        return this.studentService.getStudentById(id);
     }
 
 

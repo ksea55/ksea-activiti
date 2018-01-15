@@ -18,20 +18,20 @@ public class StudentServiceImpl implements StudentService {
     @Resource
     private StudentDao studentDao;
 
-    public void saveStudent(Student student) {
-        studentDao.add(student);
-        System.out.println(1 / 0);
 
-
-    }
 
     @Transactional(isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED, rollbackFor ={Exception.class})
     public void save(Student student) {
         studentDao.add(student);
-        System.out.println(1 / 0);
+
     }
 
     public List<Student> list() {
         return studentDao.list();
+    }
+
+    @Override
+    public Student getStudentById(String id) {
+        return this.studentDao.getStudentById(id);
     }
 }

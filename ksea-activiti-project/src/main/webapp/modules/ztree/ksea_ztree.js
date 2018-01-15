@@ -21,17 +21,18 @@ var setting = {
     },
     view: {//表示tree的显示状态
         selectedMulti: false//表示禁止多选selectedMulti
-    }/*,
+
+    },
     check: {//表示tree的节点在点击时的相关设置
-        enable: true,//是否显示radio/checkbox
-        chkStyle: "checkbox",//值为checkbox或者radio表示
-        checkboxType: {p: "", s: ""},//表示父子节点的联动效果
-        radioType: "level"//设置tree的分组
-    },*/
-    /*callback: {//表示tree的一些事件处理函数
-          onClick:handlerClick,
-         onCheck:handlerCheck
-    }*/
+        enable: false,//是否显示radio/checkbox
+        autoCheckTrigger: false,
+        chkStyle: "radio",
+        chkboxType: {"Y": "", "N": ""},//Y 属性定义 checkbox 被勾选后的情况；N 属性定义 checkbox 取消勾选后的情况；"p" 表示操作会影响父级节点；"s" 表示操作会影响子级节点。请注意大小写，不要改变
+        radioType: "all"//设置tree的分组
+    },
+    callback: {//表示tree的一些事件处理函数
+        onClick: handlerClick
+    }
 }
 
 function loadTree(url, id) {
@@ -47,21 +48,22 @@ function loadTree(url, id) {
             alert('亲，请求失败！');
         },
         success: function (data) {
-
             var nodes = [];
-
-            nodes.push({"id": -1, "parent": 0, "name": "项目树根节点","iconOpen":"/plugin/ztree_v3/css/zTreeStyle/img/diy/1_open.png","iconClose":"/plugin/ztree_v3/css/zTreeStyle/img/diy/1_close.png"});
-
+            nodes.push({
+                "id": -1,
+                "parent": 0,
+                "name": "项目树根节点",
+                "iconOpen": "/plugin/ztree_v3/css/zTreeStyle/img/diy/1_open.png",
+                "iconClose": "/plugin/ztree_v3/css/zTreeStyle/img/diy/1_close.png"
+            });
             for (var i = 0; i < data.length; i++) {
                 var node = {};
                 node.id = data[i].id;
                 node.name = data[i].name;
                 node.parent = data[i].parent;
-                node.icon="/plugin/ztree_v3/css/zTreeStyle/img/diy/2.png";
-
+                node.icon = "/plugin/ztree_v3/css/zTreeStyle/img/diy/2.png";
                 nodes.push(node);
             }
-
             //加载ztree
             zTreeObj = $.fn.zTree.init($("#" + id), setting, nodes);
 
@@ -69,4 +71,86 @@ function loadTree(url, id) {
     });
 
 
+}
+
+//查看选中的节点的信息
+function handlerClick(event, treeId, treeNode) {
+    //获取选中的值
+    $.ajax({
+        async: false,//是否异步
+        cache: false,//是否使用缓存
+        type: 'POST',//请求方式：post
+        dataType: 'json',//数据传输格式：json
+        contentType: 'application/json; charset=utf-8',
+        url: ctx + "/ztree/info/" + treeNode.id,
+        error: function () {
+            //请求失败处理函数
+            alert('请求失败！');
+        },
+        success: function (data) {
+            $("#node").html("");
+
+            if (undefined == data || null == data || data.length == 0) return false;
+
+            $("#node").html(
+                "id:" + data.id + ",name:" +
+                data.name + ",parent:" + data.parent
+            )
+            ;
+
+        }
+    });
+
+}
+
+//添加节点
+function addNode() {
+    //获取选中的节点
+    var nodes = zTreeObj.getSelectedNodes();
+    if (nodes.length == 0) {
+        alert("请选择一个节点目录");
+        return false;
+    }
+
+    var parent = nodes[0].id;
+    console.info(parent)
+
+    //页面层
+
+    layer.open({
+        type: 2,
+        title: "添加学生信息",
+        closeBtn: 0,
+        area: ['600px', '360px'],
+        shadeClose: false, //点击遮罩关闭
+        content: ctx + '/ztree/add/' + parent,
+        btn: ['添加', '取消'],
+        yes: function (index, layero) {
+
+            //获取子页面的body内容，并给子页面赋值
+            //   var body = layer.getChildFrame('body', index);
+            //  body.find('input').val('Hi，我是从父页来的')
+
+
+            //获取子页面的iframe并调用iframe中的方法
+            var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：
+            iframeWin.submitForm();
+
+            //添加完毕之后关闭模态框
+            layer.close(index);
+
+
+        },
+        btn2: function (index, layero) {
+            //按钮【按钮二】的回调
+            alert(2)
+            //return false 开启该代码可禁止点击该按钮关闭
+        },
+        cancel: function () {
+            //右上角关闭回调
+            alert("cancel")
+            //return false 开启该代码可禁止点击该按钮关闭
+        }
+    })
+    ;
 }
