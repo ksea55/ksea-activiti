@@ -46,7 +46,7 @@
 </div>
 <script type="text/javascript">
     //加载ztree数据
-    loadTree("${pageContext.request.contextPath}/ztree/json", "treeDemo");
+    loadTree("${pageContext.request.contextPath}/ztree/init/node", "treeDemo");
 
     var ctx = "${pageContext.request.contextPath}";
 </script>

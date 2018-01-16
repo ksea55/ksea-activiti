@@ -15,4 +15,6 @@ public interface StudentDao {
 
     Student getStudentById(@Param("id")String id);
 
+    List<Student> getChildrensByParent(@Param("parent")String parent);
+
 }

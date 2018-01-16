@@ -13,4 +13,9 @@
         select id ,sid,name,parent,children from student where id=#{id}
     </select>
 
+
+    <select id="getChildrensByParent" resultType="org.ksea.activiti.model.Student" parameterType="java.lang.String">
+        select id ,sid,name,parent,children from student where parent=#{parent}
+    </select>
+
 </mapper>

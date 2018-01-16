@@ -3,8 +3,7 @@ var zTreeObj;
 
 // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
 var setting = {
-    data: {//表示tree的数据格式
-
+    data: {
         key: {
             name: "name"
         },
@@ -19,6 +18,12 @@ var setting = {
         }
 
     },
+    async: {
+        enable: true,
+        type: "post",
+        url: getUrl,
+        autoParam: ["id"]
+    },
     view: {//表示tree的显示状态
         selectedMulti: false//表示禁止多选selectedMulti
 
@@ -31,7 +36,10 @@ var setting = {
         radioType: "all"//设置tree的分组
     },
     callback: {//表示tree的一些事件处理函数
-        onClick: handlerClick
+        onClick: handlerClick,
+        beforeAsync: ztreeBeforeAsync,
+        onAsyncSuccess: ztreeOnAsyncSuccess,
+        onClick: ztreeOnAsyncSuccess
     }
 }
 
@@ -111,8 +119,8 @@ function addNode() {
         alert("请选择一个节点目录");
         return false;
     }
-
-    var parent = nodes[0].id;
+    var node = nodes[0];
+    var parent = node.id;
     console.info(parent)
 
     //页面层
@@ -136,6 +144,17 @@ function addNode() {
             var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：
             iframeWin.submitForm();
 
+
+            /**
+             *   刷新 zTree
+             没有特殊必要，尽量不要使用此方法。单个节点更新请使用 updateNode 方法，异步加载模式下请使用 reAsyncChildNodes 方法。
+             请通过 zTree 对象执行此方法。
+             */
+
+            zTreeObj.updateNode();
+
+            zTreeObj.expandNode(node, true, true, true);
+
             //添加完毕之后关闭模态框
             layer.close(index);
 
@@ -153,4 +172,47 @@ function addNode() {
         }
     })
     ;
+}
+
+function ztreeBeforeAsync() {
+
+}
+
+
+function ztreeOnAsyncSuccess(event, treeId, treeNode) {
+    var url = ctx + "async/node/";
+    if (treeNode == undefined) {
+        url += "0";
+    }
+    else {
+        url += treeNode.id;
+    }
+    $.ajax({
+        type: "post",
+        url: url,
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        async: true,
+        success: function (data) {
+            if (undefined != data && null != data && data.length > 0) {
+
+                if (treeNode == undefined) {
+                    zTreeObj.addNodes(null, data, true);// 如果是根节点，那么就在null后面加载数据
+                }
+                else {
+                    zTreeObj.addNodes(treeNode, data, true);//如果是加载子节点，那么就是父节点下面加载
+                }
+
+                zTreeObj.expandNode(treeNode, true, false, false);// 将新获取的子节点展开
+            }
+        },
+        error: function () {
+            alert("请求错误！");
+        }
+    });
+
+};
+
+function getUrl() {
+
 }

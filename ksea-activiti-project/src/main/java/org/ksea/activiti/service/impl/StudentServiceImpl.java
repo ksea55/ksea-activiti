@@ -34,4 +34,9 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentById(String id) {
         return this.studentDao.getStudentById(id);
     }
+
+    @Override
+    public List<Student> getChildrensByParent(String parent) {
+        return this.studentDao.getChildrensByParent(parent);
+    }
 }

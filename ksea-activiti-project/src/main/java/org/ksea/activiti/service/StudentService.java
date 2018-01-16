@@ -9,4 +9,5 @@ public interface StudentService {
     void  save(Student student);
     List<Student> list();
     Student getStudentById(String id);
+    List<Student> getChildrensByParent(String parent);
 }
