@@ -18,9 +18,16 @@ var setting = {
         }
 
     },
+    async: {
+        enable: true,
+        type: "post",
+        url: "/ztree/load/async/node",
+        autoParam: ["id"],
+        dataFilter: filter
+    },
     view: {//表示tree的显示状态
-        selectedMulti: false//表示禁止多选selectedMulti
-
+        selectedMulti: false,//表示禁止多选selectedMulti
+        showLine: false//不显示树上的连接线
     },
     check: {//表示tree的节点在点击时的相关设置
         enable: false,//是否显示radio/checkbox
@@ -146,38 +153,10 @@ function addNode() {
         }
     });
     //刷新节点
-    zTreeObj.reAsyncChildNodes(node, "refresh", true);
+    // zTreeObj.reAsyncChildNodes(node, "refresh", true);
+    zTreeObj.reAsyncChildNodes(node, "refresh");
 }
 
-
-
-//选中刷新的节点
-function refreshChildrens() {
-
-    /*获取 zTree选中的节点*/
-    var nodes = zTreeObj.getSelectedNodes();
-
-    if (nodes.length > 0) {
-        var node = nodes[0];
-
-        console.info(node)
-        // node.open();
-        /*强行异步加载父节点的子节点。[setting.async.enable = true 时有效]*/
-        zTreeObj.reAsyncChildNodes(node, "refresh", false);
-    }
-
-
-}
-
-/**
- * 根据节点刷新
- * @param node
- */
-function refreshNode(node) {
-
-    // node.open();
-    zTreeObj.reAsyncChildNodes(node, "refresh", true);
-}
 
 function filter(treeId, parentNode, childNodes) {
     /**
@@ -195,4 +174,3 @@ function filter(treeId, parentNode, childNodes) {
     }
     return childNodes;
 }
-

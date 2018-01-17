@@ -109,5 +109,20 @@ public class StudentController {
         return childrens;
     }
 
+    /**
+     * 根据id  post异步加载
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "load/async/node", method = RequestMethod.POST)
+    @ResponseBody
+    public Object loadAsyncLoadNode(HttpServletRequest request) {
+        String id = request.getParameter("id");
+        List<Ztree> childrens = this.studentService.findAllFirstNodes(id);
+
+        return childrens;
+    }
+
 
 }
