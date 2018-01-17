@@ -14,8 +14,38 @@
     </select>
 
 
-    <select id="getChildrensByParent" resultType="org.ksea.activiti.model.Student" parameterType="java.lang.String">
+
+
+
+    <!--循环查询,加载所有节点-->
+    <select id="findAllNodes" resultMap="ztreeModel">
+        select id ,sid,name,parent,children from student
+    </select>
+
+
+
+    <!-- 所有一级节点 -->
+    <select id="findAllFirstNodes" resultType="org.ksea.activiti.vo.Ztree" parameterType="java.lang.String">
         select id ,sid,name,parent,children from student where parent=#{parent}
+    </select>
+
+    <resultMap id="ztreeModel" type="org.ksea.activiti.vo.Ztree">
+        <result property="id" column="id"/>
+        <result property="sid" column="sid"/>
+        <result property="name" column="name"/>
+        <result property="parent" column="parent"/>
+        <collection property="childrens" ofType="org.ksea.activiti.vo.Ztree" column="id"
+                    select="listFirstAllChildrenNodes"/>
+    </resultMap>
+
+    <!--根据父节点查询所有儿子节点 -->
+    <select id="findAllChildrenByParentNode" resultMap="ztreeModel" parameterType="java.lang.String">
+        select id ,sid,name,parent,children from student where parent=#{parent}
+    </select>
+
+    <!--根据父节点查询所有儿子节点，mybaits递归遍历 -->
+    <select id="listFirstAllChildrenNodes" resultType="org.ksea.activiti.vo.Ztree" parameterType="java.lang.String">
+        select id ,sid,name,parent,children from student where parent=#{id}
     </select>
 
 </mapper>

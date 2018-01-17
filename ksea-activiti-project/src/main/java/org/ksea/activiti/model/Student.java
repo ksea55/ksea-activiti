@@ -1,11 +1,14 @@
 package org.ksea.activiti.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Student {
     private String id;
     private String sid;
     private String name;
     private String parent;
-    private String children;
+    @JsonProperty(value = "ischildren")
+    private boolean ischildren;
 
 
     public Student() {
@@ -36,12 +39,12 @@ public class Student {
         this.parent = parent;
     }
 
-    public String getChildren() {
-        return children;
+    public boolean isIschildren() {
+        return ischildren;
     }
 
-    public void setChildren(String children) {
-        this.children = children;
+    public void setIschildren(boolean ischildren) {
+        this.ischildren = ischildren;
     }
 
     public String getId() {
@@ -59,7 +62,7 @@ public class Student {
                 ", sid='" + sid + '\'' +
                 ", name='" + name + '\'' +
                 ", parent=" + parent +
-                ", children='" + children + '\'' +
+                ", children='" + ischildren + '\'' +
                 '}';
     }
 }

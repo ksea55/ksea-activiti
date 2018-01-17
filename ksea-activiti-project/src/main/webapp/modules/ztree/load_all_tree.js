@@ -8,7 +8,7 @@ var setting = {
             name: "name"
         },
         view: {
-            showLine: false //不显示树上的连接线
+            showLine: false//不显示树上的连接线
         },
         simpleData: {
             enable: true,
@@ -17,12 +17,6 @@ var setting = {
             rootPId: 0
         }
 
-    },
-    async: {
-        enable: true,
-        type: "post",
-        url: getUrl,
-        autoParam: ["id"]
     },
     view: {//表示tree的显示状态
         selectedMulti: false//表示禁止多选selectedMulti
@@ -36,10 +30,7 @@ var setting = {
         radioType: "all"//设置tree的分组
     },
     callback: {//表示tree的一些事件处理函数
-        onClick: handlerClick,
-        beforeAsync: ztreeBeforeAsync,
-        onAsyncSuccess: ztreeOnAsyncSuccess,
-        onClick: ztreeOnAsyncSuccess
+        onClick: handlerClick
     }
 }
 
@@ -56,24 +47,20 @@ function loadTree(url, id) {
             alert('亲，请求失败！');
         },
         success: function (data) {
-            var nodes = [];
-            nodes.push({
+
+            var rootNode = {
                 "id": -1,
                 "parent": 0,
-                "name": "项目树根节点",
+                "name": "飞机设计模型",
                 "iconOpen": "/plugin/ztree_v3/css/zTreeStyle/img/diy/1_open.png",
-                "iconClose": "/plugin/ztree_v3/css/zTreeStyle/img/diy/1_close.png"
-            });
-            for (var i = 0; i < data.length; i++) {
-                var node = {};
-                node.id = data[i].id;
-                node.name = data[i].name;
-                node.parent = data[i].parent;
-                node.icon = "/plugin/ztree_v3/css/zTreeStyle/img/diy/2.png";
-                nodes.push(node);
-            }
+                "iconClose": "/plugin/ztree_v3/css/zTreeStyle/img/diy/1_close.png",
+                "open": true
+            };
+
+            data.push(rootNode);
+
             //加载ztree
-            zTreeObj = $.fn.zTree.init($("#" + id), setting, nodes);
+            zTreeObj = $.fn.zTree.init($("#" + id), setting, data);
 
         }
     });
@@ -124,7 +111,6 @@ function addNode() {
     console.info(parent)
 
     //页面层
-
     layer.open({
         type: 2,
         title: "添加学生信息",
@@ -145,74 +131,68 @@ function addNode() {
             iframeWin.submitForm();
 
 
-            /**
-             *   刷新 zTree
-             没有特殊必要，尽量不要使用此方法。单个节点更新请使用 updateNode 方法，异步加载模式下请使用 reAsyncChildNodes 方法。
-             请通过 zTree 对象执行此方法。
-             */
-
-            zTreeObj.updateNode();
-
-            zTreeObj.expandNode(node, true, true, true);
-
             //添加完毕之后关闭模态框
             layer.close(index);
 
 
         },
         btn2: function (index, layero) {
-            //按钮【按钮二】的回调
-            alert(2)
+
             //return false 开启该代码可禁止点击该按钮关闭
         },
         cancel: function () {
-            //右上角关闭回调
-            alert("cancel")
+
             //return false 开启该代码可禁止点击该按钮关闭
         }
-    })
-    ;
-}
-
-function ztreeBeforeAsync() {
-
-}
-
-
-function ztreeOnAsyncSuccess(event, treeId, treeNode) {
-    var url = ctx + "async/node/";
-    if (treeNode == undefined) {
-        url += "0";
-    }
-    else {
-        url += treeNode.id;
-    }
-    $.ajax({
-        type: "post",
-        url: url,
-        contentType: 'application/json; charset=utf-8',
-        dataType: "json",
-        async: true,
-        success: function (data) {
-            if (undefined != data && null != data && data.length > 0) {
-
-                if (treeNode == undefined) {
-                    zTreeObj.addNodes(null, data, true);// 如果是根节点，那么就在null后面加载数据
-                }
-                else {
-                    zTreeObj.addNodes(treeNode, data, true);//如果是加载子节点，那么就是父节点下面加载
-                }
-
-                zTreeObj.expandNode(treeNode, true, false, false);// 将新获取的子节点展开
-            }
-        },
-        error: function () {
-            alert("请求错误！");
-        }
     });
+    //刷新节点
+    zTreeObj.reAsyncChildNodes(node, "refresh", true);
+}
 
-};
 
-function getUrl() {
+
+//选中刷新的节点
+function refreshChildrens() {
+
+    /*获取 zTree选中的节点*/
+    var nodes = zTreeObj.getSelectedNodes();
+
+    if (nodes.length > 0) {
+        var node = nodes[0];
+
+        console.info(node)
+        // node.open();
+        /*强行异步加载父节点的子节点。[setting.async.enable = true 时有效]*/
+        zTreeObj.reAsyncChildNodes(node, "refresh", false);
+    }
+
 
 }
+
+/**
+ * 根据节点刷新
+ * @param node
+ */
+function refreshNode(node) {
+
+    // node.open();
+    zTreeObj.reAsyncChildNodes(node, "refresh", true);
+}
+
+function filter(treeId, parentNode, childNodes) {
+    /**
+     * treeId:当前树的id:treeDemo
+     * parentNode:父节点，也就是当前点击的节点
+     * childNodes:子节点，当前点击节点的所有儿子节点
+     *
+     */
+
+    console.info(childNodes)
+
+    if (!childNodes) return null;
+    for (var i = 0, l = childNodes.length; i < l; i++) {
+        childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+    }
+    return childNodes;
+}
+

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.annotations.Param;
 import org.ksea.activiti.model.Student;
 import org.ksea.activiti.service.StudentService;
+import org.ksea.activiti.vo.Ztree;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -44,10 +45,15 @@ public class StudentController {
         return "ztree/home";
     }
 
+    @RequestMapping(value = "nodes", method = RequestMethod.GET)
+    public String nodes() {
+        return "ztree/nodes";
+    }
+
     @RequestMapping(value = "json", method = RequestMethod.POST)
     @ResponseBody
     public Object listJson() {
-        List<Student> list = this.studentService.list();
+        List<Ztree> list = this.studentService.findAllNodes();
         return list;
     }
 
@@ -60,13 +66,16 @@ public class StudentController {
 
     /**
      * 获取所有一级节点
+     *
      * @param request
      * @return
      */
     @RequestMapping(value = "init/node", method = RequestMethod.POST)
     @ResponseBody
     public Object initNode(HttpServletRequest request) {
-        return this.studentService.getChildrensByParent("-1");
+        List<Ztree> childrens = this.studentService.findAllFirstNodes("-1");
+
+        return childrens;
     }
 
 
@@ -77,8 +86,27 @@ public class StudentController {
      */
     @RequestMapping(value = "async/node/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public Object asyncLoadNode(@PathVariable("id")String id) {
-        return this.studentService.getChildrensByParent(id);
+    public Object asyncLoadNode(@PathVariable("id") String id) {
+
+        List<Ztree> childrens = this.studentService.findAllChildrenByParentNode(id);
+
+        return childrens;
+    }
+
+
+    /**
+     * 根据id  post异步加载
+     *
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "async/node", method = RequestMethod.POST)
+    @ResponseBody
+    public Object asyncLoadNode(HttpServletRequest request) {
+        String id = request.getParameter("id");
+        List<Ztree> childrens = this.studentService.findAllChildrenByParentNode(id);
+
+        return childrens;
     }
 
 
